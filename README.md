@@ -8,3 +8,6 @@ However  the mechanical properties and performances are highly dependent on comp
 This project will focus on vacuum bagging process and show how to reuse a cheap refrigerator compressor as the main vacuum pump.
 This project is fully documented on my hackazday's pages here : https://hackaday.io/project/196665-a-vacuum-pump-with-old-fridge-motor
 
+Firmware for ESP32 is available into this github : https://github.com/f2knpw/VacuumPump/blob/master/JP_ESP2_eVacuumPump_BLE.ino
+Android application is available into this zip : 
+
