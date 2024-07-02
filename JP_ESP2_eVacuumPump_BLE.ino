@@ -194,8 +194,8 @@ void setup()
   pinMode(START_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
-  digitalWrite(START_PIN, LOW); //start coil not powered
-  digitalWrite(RUN_PIN, LOW);   //run coil not powered
+  digitalWrite(START_PIN, HIGH); //start coil not powered
+  digitalWrite(RUN_PIN, HIGH);   //run coil not powered
   delay(5000);
 
 
