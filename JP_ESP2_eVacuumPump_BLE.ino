@@ -10,12 +10,13 @@
 Preferences preferences;
 
 
-enum { statusStop, statusStart, statusRun, statusIdle };
+enum { statusStop, statusStart, statusRun, statusIdle, statusAlarm };
 int status = statusStart; //pump will automatically start its vacuum cycle after booting the ESP32
 String displayStatus = "Initializing";
 
-float pressure, lowPressure, highPressure;
+float pressure, lowPressure, highPressure, prevPressure;
 long lastStart;
+int alarmCount;
 
 //OLED
 #define OLED
@@ -49,6 +50,8 @@ boolean TouchWake = false;
 #define PLUS_PIN  14  //touch pin to increase highPressure threshold
 #define MINUS_PIN  12  //touch pin to decrease highPressure threshold
 long lastTouch ;
+
+#define RESTART_DELAY 15000
 
 #define W_DEBUG     //debug Wifi and firebase
 //#define G_DEBUG     //debug GCM serveur
@@ -261,7 +264,7 @@ void setup()
   analogSetWidth(12);                   // Sets the sample bits and read resolution, default is 12-bit (0 - 4095), range is 9 - 12 bits
   analogSetAttenuation(ADC_11db);        // Sets the input attenuation for ALL ADC inputs, default is ADC_11db, range is ADC_0db, ADC_2_5db, ADC_6db, ADC_11db
 
-  lastStart = millis() - 30000;
+  lastStart = millis() - RESTART_DELAY;
   lastTouch = millis();
 }
 
@@ -278,7 +281,7 @@ void loop()
   }
   pressure = pressure / 1000;
   //pressure = mapfloat(pressure, fromLow, fromHigh, toLow, toHigh);
-  pressure = mapfloat(pressure, 242, 3268, 100, 0); //242 is ADC for 0.2V ; 3266 is ADC for 2.7V
+  pressure = mapfloat(pressure, 242, 3200, 100, 0); //242 is ADC for 0.2V ; 3200 is ADC for 2.7V (atmospheric pressure)
   // sensor datasheet here : https://www.micros.com.pl/mediaserver/CZ_XGZP6847a010kpg_0001.pdf
   // or here : https://cdn.hackaday.io/files/1966658414115360/negPressure%20Sensor_CZ_XGZP6847a010kpg_0001.pdf
 
@@ -293,8 +296,10 @@ void loop()
   switch (status)
   {
     case statusStart:
-      if ((millis() - lastStart) > 30000)
-      {
+      if ((millis() - lastStart) > RESTART_DELAY)
+      { 
+        prevPressure = pressure;
+        alarmCount = 0;
         startPump(true);
         status = statusRun;
       }
@@ -310,12 +315,23 @@ void loop()
         startPump(false);
         status = statusIdle;
       }
+      if ((pressure - prevPressure) < 3) 
+      {
+        alarmCount ++;
+        Serial.print("alarmCount ");
+        Serial.println(alarmCount);
+      }
+      if (alarmCount > 20)
+      {
+        Serial.println("motor not started");
+        status = statusAlarm;
+        startPump(false);
+      }
     case statusIdle:
       if (pressure < lowPressure)
       {
-        if ((millis() - lastStart) > 30000)
+        if ((millis() - lastStart) > RESTART_DELAY)
         {
-          //startPump(true);
           status = statusStart;
         }
       }
@@ -424,8 +440,11 @@ void displayLCD(void) //refresh the LCD screen
 void startPump(boolean start)
 {
   if (start == true)
-  {
+  {  
     digitalWrite (RUN_PIN, LOW);
+    digitalWrite(START_PIN, LOW);
+    delay(500);
+    digitalWrite(START_PIN, HIGH);
   }
   else
   {
