@@ -32,7 +32,7 @@ long lastStart, lastRun;
 int alarmCount;
 
 //OLED
-//#define OLED
+#define OLED
 #ifdef OLED
 #define OLED_SCL_PIN 5
 #define OLED_SDA_PIN 17
@@ -525,53 +525,42 @@ void loop()
     {
       //Serial.println("touch ON detected ");
       lastTouch = millis();
-      status = statusStart; //will start the pump
-
-    }
-    if (ftouchRead(OFF_PIN)  < threshold)
-    {
-      //Serial.println("touch OFF detected ");
-      lastTouch = millis();
-      status = statusStop;  // will stop the pump
-    }
-    if (ftouchRead(PLUS_PIN) < threshold)
-    {
-      //Serial.println("touch + detected ");
-      lastTouch = millis();
-      if (status == statusStop)
+      if (ftouchRead(PLUS_PIN) < threshold) //ON & PLUS = increase highPressure
       {
         highPressure += 5;
         preferences.putFloat("highPressure", highPressure);
         //        Serial.print("Set high value ");
         //        Serial.println(highPressure);
       }
-      else
-      {
-        lowPressure += 5;
-        preferences.putFloat("lowPressure", lowPressure);
-        //        Serial.print("Set low value ");
-        //        Serial.println(lowPressure);
-      }
-
-    }
-    if (ftouchRead(MINUS_PIN) < threshold)
-    {
-      //Serial.println("touch - detected ");
-      lastTouch = millis();
-      if (status == statusStop)
+      else if (ftouchRead(MINUS_PIN) < threshold) //ON & MINUS = decrease highPressure
       {
         highPressure -= 5;
         preferences.putFloat("highPressure", highPressure);
         //        Serial.print("Set high value ");
         //        Serial.println(highPressure);
       }
-      else
+      else status = statusStart; //will start the pump
+
+    }
+    if (ftouchRead(OFF_PIN)  < threshold)
+    {
+      //Serial.println("touch OFF detected ");
+      lastTouch = millis();
+      if (ftouchRead(PLUS_PIN) < threshold) //OFF & PLUS = increase lowPressure
       {
-        lowPressure -= 5;
+        lowPressure += 5;
         preferences.putFloat("lowPressure", lowPressure);
         //        Serial.print("Set low value ");
         //        Serial.println(lowPressure);
       }
+      else if (ftouchRead(MINUS_PIN) < threshold) //OFF & MINUS = decrease lowPressure
+      {
+        lowPressure -= 5;
+        preferences.putFloat("lowPressure", lowPressure);
+        //        Serial.print("Set low value ");
+        //        Serial.println(highPressure);
+      }
+      else status = statusStop;  // will stop the pump
     }
   }
 
