@@ -362,7 +362,7 @@ void setup()
 
 
 
-  if (hasWifiCredentials)
+  //if (hasWifiCredentials)
   {
     TelnetStream.begin(); //used to debug over telnet
     Serial.print("IP address: ");
