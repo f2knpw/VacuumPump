@@ -19,4 +19,4 @@ Android application is the same (+UDP interface) and is available into this zip 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=u8--6SWsQ9E
 " target="_blank"><img src="http://img.youtube.com/vi/u8--6SWsQ9E/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="960" height="720" border="10" /></a>
+alt="IMAGE ALT TEXT HERE" width="1180" height="664" border="10" /></a>
