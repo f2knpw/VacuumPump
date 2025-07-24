@@ -16,3 +16,7 @@ This second project is fully documented on my hackaday's pages here : https://ha
 
 Firmware for ESP32 is available into this github : https://github.com/f2knpw/VacuumPump/blob/master/JP_ESP2_eVacuumPump_BLE_Wifi.ino
 Android application is the same (+UDP interface) and is available into this zip : https://github.com/f2knpw/VacuumPump/blob/master/JP_VacuumPumpv2.zip
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=u8--6SWsQ9E
+" target="_blank"><img src="http://img.youtube.com/vi/u8--6SWsQ9E/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
